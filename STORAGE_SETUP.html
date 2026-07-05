@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Storage Setup Guide — Terry's Tender Wear</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: #f5f5f5; padding: 2rem 1rem; }
+    .setup-container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 12px; 
+                       box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 2rem; }
+    h1 { color: var(--charcoal); margin-bottom: 0.5rem; }
+    .subtitle { color: var(--mid); margin-bottom: 2rem; font-size: 0.95rem; }
+    .section { margin-bottom: 2.5rem; }
+    .section h2 { color: var(--coral); font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--line); padding-bottom: 0.5rem; }
+    .step { margin-bottom: 1.5rem; padding: 1rem; background: var(--cream-d); border-radius: 8px; border-left: 4px solid var(--coral); }
+    .step-num { display: inline-block; background: var(--coral); color: #fff; width: 28px; height: 28px; 
+                border-radius: 50%; text-align: center; line-height: 28px; font-weight: 800; margin-right: 0.8rem; }
+    .step-content { display: inline-block; vertical-align: top; }
+    .code-block { background: #2d2d2d; color: #f8f8f2; padding: 1rem; border-radius: 8px; 
+                  overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.85rem;
+                  line-height: 1.5; margin: 1rem 0; }
+    .code-block code { color: #f8f8f2; }
+    .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; }
+    .success { background: #d4f4de; border-left: 4px solid #155724; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; color: #155724; }
+    .btn { display: inline-block; background: var(--coral); color: #fff; padding: 0.8rem 1.5rem; 
+           border-radius: 8px; text-decoration: none; font-weight: 700; cursor: pointer; border: none;
+           font-size: 0.95rem; transition: background 0.2s; }
+    .btn:hover { background: var(--coral-d); }
+    .back-link { display: inline-block; margin-bottom: 1.5rem; color: var(--coral); text-decoration: none; font-weight: 600; }
+    .back-link:hover { text-decoration: underline; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th { background: var(--cream-d); padding: 0.8rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--line); }
+    td { padding: 0.8rem; border-bottom: 1px solid var(--line); }
+  </style>
+</head>
+<body>
+
+<div class="setup-container">
+  <a href="admin.html" class="back-link">← Back to Admin</a>
+  
+  <h1>🖼️ Image Upload Setup Guide</h1>
+  <p class="subtitle">Complete these steps to enable image uploads to Supabase Storage</p>
+
+  <!-- ══ CHECKLIST ══════════════════════════════════ -->
+  <div class="section">
+    <h2>Quick Checklist</h2>
+    <p>Before troubleshooting, verify you've completed these:</p>
+    <div style="margin-top: 1rem;">
+      <input type="checkbox" id="check-bucket"/> <label for="check-bucket">✅ Created bucket named <strong>"product-images"</strong></label><br/>
+      <input type="checkbox" id="check-public"/> <label for="check-public">✅ Set bucket to <strong>PUBLIC</strong></label><br/>
+      <input type="checkbox" id="check-policy"/> <label for="check-policy">✅ Created RLS policies for storage (see below)</label><br/>
+      <input type="checkbox" id="check-test"/> <label for="check-test">✅ Tested upload in Admin panel</label>
+    </div>
+  </div>
+
+  <!-- ══ STEP 1: CREATE BUCKET ══════════════════════ -->
+  <div class="section">
+    <h2>Step 1: Create Storage Bucket</h2>
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <strong>Go to your Supabase Dashboard</strong><br/>
+        <a href="https://supabase.com/dashboard" target="_blank" style="color: var(--coral);">supabase.com/dashboard →</a>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <strong>Navigate to Storage</strong><br/>
+        In the left sidebar, click <strong>Storage</strong>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <strong>Create New Bucket</strong><br/>
+        Click the <strong>"New Bucket"</strong> or <strong>"Create bucket"</strong> button
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <strong>Configure Bucket</strong><br/>
+        <strong>Name:</strong> <code>product-images</code><br/>
+        <strong>Privacy:</strong> Make it <strong>PUBLIC</strong> ✅<br/>
+        <em style="color: var(--mid);">Images won't load if this is private</em>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">5</span>
+      <div class="step-content">
+        <strong>Save & Create</strong><br/>
+        Click the <strong>Create Bucket</strong> button
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: CREATE RLS POLICIES ════════════════ -->
+  <div class="section">
+    <h2>Step 2: Set Up Storage Policies (RLS)</h2>
+    <p><strong>Important!</strong> Even if the bucket is public, you need RLS policies to allow uploads.</p>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <strong>Go to SQL Editor</strong><br/>
+        In Supabase Dashboard, click <strong>SQL Editor</strong> in the left sidebar
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <strong>Create New Query</strong><br/>
+        Click <strong>"New Query"</strong> button
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <strong>Copy & Paste This SQL</strong><br/>
+        <div class="code-block"><code>-- Enable RLS on storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Public read images" ON storage.objects;
+DROP POLICY IF EXISTS "Public upload images" ON storage.objects;
+DROP POLICY IF EXISTS "Admin delete images" ON storage.objects;
+
+-- Allow ANYONE to view/download images
+CREATE POLICY "Public read images"
+  ON storage.objects FOR SELECT
+  TO anon, authenticated
+  USING (bucket_id = 'product-images');
+
+-- Allow ANYONE to upload images (no login required)
+CREATE POLICY "Public upload images"
+  ON storage.objects FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (bucket_id = 'product-images');
+
+-- Allow authenticated users to delete their images
+CREATE POLICY "Admin delete images"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'product-images' AND auth.uid() IS NOT NULL);</code></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <strong>Run the Query</strong><br/>
+        Click the blue <strong>"Run"</strong> button (or press Ctrl+Enter)
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span>
+      <div class="step-content">
+        <strong>Verify Success</strong><br/>
+        You should see a success message at the bottom. ✅
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VERIFICATION ═════════════════════════════ -->
+  <div class="section">
+    <h2>Step 3: Test Image Upload</h2>
+    
+    <div class="success">
+      ✅ <strong>Setup Complete!</strong><br/>
+      You can now test uploading images in the Admin Dashboard.
+    </div>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <strong>Go to Admin Dashboard</strong><br/>
+        <a href="admin.html" class="btn">Open Admin Dashboard →</a>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <strong>Add a New Product</strong><br/>
+        Click <strong>"Add Product"</strong> button
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <strong>Upload Product Image</strong><br/>
+        Click the upload area and select an image (JPG, PNG, WebP)<br/>
+        <em style="color: var(--mid);">Max file size: 10MB</em>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <strong>Fill Product Details & Save</strong><br/>
+        Complete the form and click <strong>"Save & Publish Product"</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TROUBLESHOOTING ════════════════════════════ -->
+  <div class="section">
+    <h2>❓ Troubleshooting</h2>
+
+    <h3 style="color: var(--charcoal); margin-top: 1.5rem; margin-bottom: 0.8rem;">Upload fails with "404 - Bucket not found"</h3>
+    <ul style="margin-left: 1.5rem; color: var(--mid); line-height: 1.8;">
+      <li>✓ Confirm bucket name is exactly <strong>"product-images"</strong> (lowercase, no spaces)</li>
+      <li>✓ Check the bucket exists in Storage → Buckets list</li>
+      <li>✓ Make sure bucket is set to PUBLIC</li>
+    </ul>
+
+    <h3 style="color: var(--charcoal); margin-top: 1.5rem; margin-bottom: 0.8rem;">Upload fails with "Permission Denied"</h3>
+    <ul style="margin-left: 1.5rem; color: var(--mid); line-height: 1.8;">
+      <li>✓ Go back and re-run the SQL policies (Step 2)</li>
+      <li>✓ Check bucket is set to PUBLIC (not private)</li>
+      <li>✓ Verify "Public upload images" policy exists in Storage → Policies</li>
+    </ul>
+
+    <h3 style="color: var(--charcoal); margin-top: 1.5rem; margin-bottom: 0.8rem;">Image uploads but doesn't appear on store</h3>
+    <ul style="margin-left: 1.5rem; color: var(--mid); line-height: 1.8;">
+      <li>✓ Hard refresh the store page (Ctrl+Shift+R on Windows)</li>
+      <li>✓ Check image URL is correctly saved in product record</li>
+      <li>✓ Verify bucket is PUBLIC (images won't load if private)</li>
+    </ul>
+
+    <h3 style="color: var(--charcoal); margin-top: 1.5rem; margin-bottom: 0.8rem;">Bucket created but still says "not found"</h3>
+    <ul style="margin-left: 1.5rem; color: var(--mid); line-height: 1.8;">
+      <li>✓ Check project URL in <code>supabase-config.js</code> matches your Supabase project</li>
+      <li>✓ Check your ANON_KEY is correct (from Settings → API Keys)</li>
+      <li>✓ Try refreshing the admin page (Ctrl+R) and uploading again</li>
+    </ul>
+  </div>
+
+  <!-- ══ COMMON ISSUES ══════════════════════════════ -->
+  <div class="section">
+    <h2>📋 Common Issues & Solutions</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Admin shows "Local Storage" mode</strong></td>
+          <td>Your Supabase credentials aren't loaded. Check <code>supabase-config.js</code> has correct URL & key</td>
+        </tr>
+        <tr>
+          <td><strong>Upload progress bar appears then disappears</strong></td>
+          <td>File uploaded but URL retrieval failed. Bucket might be private</td>
+        </tr>
+        <tr>
+          <td><strong>Successfully uploaded but image URL is wrong</strong></td>
+          <td>Check bucket is PUBLIC in Supabase Dashboard</td>
+        </tr>
+        <tr>
+          <td><strong>Want to delete old images?</strong></td>
+          <td>Go to Supabase Dashboard → Storage → product-images and delete files manually</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ QUICK REFERENCE ════════════════════════════ -->
+  <div class="section">
+    <h2>📚 Quick Reference</h2>
+    <div style="background: var(--cream-d); padding: 1.2rem; border-radius: 8px;">
+      <p><strong>Bucket Name:</strong> <code>product-images</code></p>
+      <p><strong>Privacy Setting:</strong> PUBLIC ✅</p>
+      <p><strong>Max Image Size:</strong> 10MB</p>
+      <p><strong>Supported Formats:</strong> JPG, PNG, WebP, GIF</p>
+      <p><strong>Image Path Format:</strong> <code>products/product-TIMESTAMP-RANDOM.jpg</code></p>
+      <p><strong>URL Format:</strong> <code>https://YOUR-PROJECT.supabase.co/storage/v1/object/public/product-images/products/...</code></p>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ════════════════════════════════════ -->
+  <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); text-align: center; color: var(--mid);">
+    <p style="font-size: 0.9rem;">Having issues? Check the <a href="SUPABASE_GUIDE.html" style="color: var(--coral);">full Supabase setup guide</a></p>
+    <p style="font-size: 0.9rem; margin-top: 0.8rem;"><a href="admin.html" class="btn" style="display: inline-block; margin-top: 1rem;">Back to Admin Dashboard</a></p>
+  </div>
+</div>
+
+<script>
+// Restore checkboxes from localStorage
+document.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+  var saved = localStorage.getItem('setup-' + cb.id);
+  if (saved === 'true') cb.checked = true;
+  cb.addEventListener('change', function() {
+    localStorage.setItem('setup-' + cb.id, this.checked);
+  });
+});
+</script>
+
+</body>
+</html>

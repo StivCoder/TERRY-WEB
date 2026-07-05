@@ -1,0 +1,137 @@
+📸 IMAGE UPLOAD FIX — SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ WHAT I FIXED:
+─────────────────
+
+1. **Removed Auto-Bucket Creation Code**
+   - The upload code was trying to create the bucket using Supabase service role,
+     which your anon key doesn't have permission to do
+   - Now it goes straight to uploading without unnecessary checks
+
+2. **Better Error Messages**
+   - Upload failures now show helpful, specific error messages
+   - Distinguishes between "bucket not found" vs "permission denied"
+   - Shows setup instructions link when there's a storage error
+
+3. **Added Storage Setup Guide (STORAGE_SETUP.html)**
+   - Complete step-by-step instructions for setting up image uploads
+   - Includes all required SQL policies
+   - Troubleshooting section for common issues
+   - Quick reference for bucket settings
+
+4. **Added Storage Methods to db.js**
+   - `DB.uploadProductImage()` - for uploading images via code
+   - `DB.getStorageSetupGuide()` - retrieves setup instructions
+   - Better error handling and messages
+
+5. **Updated Admin Settings**
+   - Added link to storage setup guide in Settings panel
+   - Easy access to complete configuration instructions
+
+
+⚠️ WHAT YOU NEED TO DO NEXT:
+────────────────────────────
+
+Since you mentioned you created the bucket and set it public, make sure
+the RLS policies are correct:
+
+STEP 1: Go to your Supabase Dashboard
+→ https://supabase.com/dashboard
+
+STEP 2: Click SQL Editor in the left sidebar
+
+STEP 3: Create a NEW Query and paste this SQL:
+
+```sql
+-- Enable RLS on storage objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Public read images" ON storage.objects;
+DROP POLICY IF EXISTS "Public upload images" ON storage.objects;
+
+-- Allow ANYONE to read images (for frontend)
+CREATE POLICY "Public read images"
+  ON storage.objects FOR SELECT
+  TO anon, authenticated
+  USING (bucket_id = 'product-images');
+
+-- Allow ANYONE to upload images (no login needed)
+CREATE POLICY "Public upload images"
+  ON storage.objects FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (bucket_id = 'product-images');
+```
+
+STEP 4: Click the blue "Run" button (or press Ctrl+Enter)
+
+STEP 5: You should see "Success" message ✅
+
+
+🧪 TESTING THE FIX:
+────────────────────
+
+1. Go to: Admin Dashboard → Add Product
+   (or open your website's admin panel)
+
+2. Scroll to "Product Image" section
+
+3. Click or drag-drop an image to upload
+
+4. You should see:
+   ✅ Progress bar fills
+   ✅ "Image uploaded successfully!" message
+   ✅ Image preview appears
+
+
+❓ IF STILL NOT WORKING:
+────────────────────────
+
+✓ Check bucket name is exactly: "product-images" (lowercase)
+✓ Check bucket is set to PUBLIC (not private)
+✓ Verify you ran the SQL policies (copy-paste carefully)
+✓ Hard refresh admin page: Ctrl+Shift+R
+✓ Check browser console (F12) for detailed error messages
+
+For complete step-by-step guide, open:
+→ Admin Dashboard → Settings → "📖 View Setup Guide"
+
+Or directly open: STORAGE_SETUP.html
+
+
+✨ YOUR NEW SETUP LINK:
+───────────────────────
+
+In the admin panel Settings section, I added a button linking to:
+📖 View Setup Guide
+
+This shows you exactly how to:
+1. Create the storage bucket
+2. Run the correct SQL policies
+3. Test image uploads
+4. Troubleshoot common issues
+
+
+💡 KEY CHANGES IN FILES:
+────────────────────────
+
+admin.html:
+- Removed ensureBucket() function (was causing failures)
+- Improved error handling with specific messages
+- Added storage setup guide link in Settings
+- Better visual feedback for upload status
+
+db.js:
+- Added uploadProductImage() method
+- Added getStorageSetupGuide() method
+- Better error messages
+
+STORAGE_SETUP.html (NEW):
+- Complete visual guide with screenshots instructions
+- SQL code ready to copy-paste
+- Troubleshooting section
+- Common issues table
+
+═══════════════════════════════════════════════════════════════
+Ready to test? Open Admin Dashboard and try uploading an image! 🚀

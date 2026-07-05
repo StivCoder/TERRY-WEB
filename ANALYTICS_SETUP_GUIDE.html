@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Setup Guide — Terry's Tender Wear</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 2rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    h1 { color: #FF6B6B; margin-bottom: 0.5rem; }
+    .subtitle { color: #666; margin-bottom: 2rem; }
+    h2 { color: #444; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 3px solid #FF6B6B; padding-bottom: 0.5rem; }
+    h3 { color: #555; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+    p, li { margin-bottom: 0.8rem; }
+    ul { margin-left: 2rem; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #d63384; }
+    .step { background: #f9f9f9; border-left: 4px solid #FF6B6B; padding: 1.5rem; margin: 1.5rem 0; border-radius: 4px; }
+    .success { background: #d4f4de; color: #155724; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    .warning { background: #fff3cd; color: #856404; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    .info { background: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f4f4f4; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📊 Analytics Dashboard Setup Guide</h1>
+  <p class="subtitle">Complete guide to setting up the advanced analytics system for Terry's Tender Wear</p>
+
+  <h2>📖 What's New</h2>
+  <p>Your store now has a powerful analytics system that tracks:</p>
+  <ul>
+    <li><strong>User Sessions:</strong> How many unique visitors, session duration, device type</li>
+    <li><strong>Page Analytics:</strong> Most visited pages, time spent on each page</li>
+    <li><strong>Product Analytics:</strong> Product views, clicks, add-to-cart interactions, conversion rates</li>
+    <li><strong>Sales Analytics:</strong> Revenue trends, total orders, average order value</li>
+    <li><strong>Engagement Metrics:</strong> Bounce rate, pages per session, return visitors, conversion rate</li>
+  </ul>
+
+  <h2>🚀 Quick Start</h2>
+  <div class="step">
+    <h3>For Local Storage Mode (No Setup Required)</h3>
+    <p>Analytics works immediately! Data is stored locally in your browser.</p>
+    <ol>
+      <li>Visit any page on your store (index.html, products.html, etc.)</li>
+      <li>Log into your admin panel</li>
+      <li>Click <strong>📈 Analytics</strong> in the sidebar</li>
+      <li>View your analytics dashboard</li>
+    </ol>
+    <div class="warning">
+      <strong>ℹ️ Note:</strong> Local storage analytics are only visible in the same browser. For persistent analytics across devices, configure Supabase below.
+    </div>
+  </div>
+
+  <h2>🗄️ Supabase Setup (Optional but Recommended)</h2>
+  <p>For persistent analytics across all devices and browsers, configure Supabase:</p>
+
+  <div class="step">
+    <h3>Step 1: Get Your Supabase Credentials</h3>
+    <ol>
+      <li>Open <a href="https://supabase.com" target="_blank">supabase.com</a></li>
+      <li>Login and select your project</li>
+      <li>Go to <strong>Settings → API</strong> in the left sidebar</li>
+      <li>Copy your <strong>Project URL</strong> and <strong>Anon Public Key</strong></li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h3>Step 2: Update supabase-config.js</h3>
+    <p>Open <code>supabase-config.js</code> and paste your credentials:</p>
+    <div style="background:#f4f4f4;padding:1rem;border-radius:6px;font-family:monospace;font-size:0.9rem;overflow-x:auto;">
+var SUPABASE_URL      = "https://YOUR_URL.supabase.co";<br>
+var SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 3: Create Analytics Tables</h3>
+    <ol>
+      <li>In Supabase, click <strong>SQL Editor</strong> in the left sidebar</li>
+      <li>Click <strong>New Query</strong></li>
+      <li>Copy the SQL from <strong>supabase-config.js</strong> comments (the SQL for analytics tables)</li>
+      <li>Paste it into Supabase and click <strong>Run</strong></li>
+    </ol>
+    <div class="success">
+      <strong>✅ Done!</strong> Your analytics database is now set up. Data collection starts automatically.
+    </div>
+  </div>
+
+  <h2>📊 Using the Analytics Dashboard</h2>
+  
+  <h3>Access Dashboard</h3>
+  <ol>
+    <li>Log into your admin panel</li>
+    <li>Click <strong>📈 Analytics</strong> in the sidebar</li>
+    <li>Use the <strong>📅 Date Range</strong> dropdown to filter data</li>
+    <li>Click <strong>🔄 Refresh</strong> to reload</li>
+  </ol>
+
+  <h3>Key Metrics</h3>
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>What It Means</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Total Sessions</td><td>Number of visitor sessions</td></tr>
+      <tr><td>Unique Users</td><td>Individual visitors</td></tr>
+      <tr><td>Page Views</td><td>Total pages viewed</td></tr>
+      <tr><td>Avg. Session Time</td><td>Average minutes per session</td></tr>
+      <tr><td>Revenue</td><td>Total sales in KES</td></tr>
+      <tr><td>Total Orders</td><td>Completed purchases</td></tr>
+      <tr><td>Bounce Rate %</td><td>% visitors who left without interaction</td></tr>
+      <tr><td>Conversion Rate %</td><td>% of sessions resulting in a sale</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Charts Explained</h3>
+  <ul>
+    <li><strong>Sessions Over Time:</strong> See traffic trends over days/weeks</li>
+    <li><strong>Most Visited Pages:</strong> Which pages attract the most traffic</li>
+    <li><strong>Users by Device:</strong> Mobile vs Desktop vs Tablet breakdown</li>
+    <li><strong>Revenue Trend:</strong> Sales performance over time</li>
+  </ul>
+
+  <h3>Product Analytics</h3>
+  <p>View your best-performing products:</p>
+  <ul>
+    <li><strong>Views:</strong> Times the product was viewed</li>
+    <li><strong>Clicks:</strong> Times product detail opened</li>
+    <li><strong>Add to Cart:</strong> Times added to cart</li>
+    <li><strong>Conversion %:</strong> View-to-cart conversion rate</li>
+  </ul>
+
+  <h2>🎯 How Analytics Work</h2>
+  
+  <h3>What Gets Tracked Automatically</h3>
+  <ul>
+    <li>Every page visit</li>
+    <li>Time spent on each page</li>
+    <li>Device type (Mobile/Tablet/Desktop)</li>
+    <li>Product views and add-to-cart actions</li>
+    <li>Every sale/order</li>
+  </ul>
+
+  <h3>Session Tracking</h3>
+  <p>Each visitor gets a unique session ID stored in their browser. Sessions last 30 minutes of inactivity.</p>
+
+  <h3>Privacy & Security</h3>
+  <ul>
+    <li>No personal information is tracked</li>
+    <li>Data is admin-only with Supabase Row Level Security</li>
+    <li>Your Supabase database is encrypted</li>
+  </ul>
+
+  <h2>💡 Tips for Success</h2>
+  <ul>
+    <li><strong>Check weekly:</strong> Monitor trends and adjust strategy</li>
+    <li><strong>Study top products:</strong> Allocate more inventory to best sellers</li>
+    <li><strong>Improve low performers:</strong> Better descriptions for products with low conversion</li>
+    <li><strong>Optimize mobile:</strong> Most traffic comes from mobile devices</li>
+    <li><strong>Track seasons:</strong> Note traffic patterns (holidays, sales, etc.)</li>
+  </ul>
+
+  <h2>❓ FAQ</h2>
+  
+  <h3>Do I need Supabase to use analytics?</h3>
+  <p>No! Analytics work with just local storage. But with Supabase, data persists across devices.</p>
+
+  <h3>How accurate is the tracking?</h3>
+  <p>The system tracks JavaScript events. If a user has JavaScript disabled or ad blockers on, events won't be tracked. This is standard for all web analytics.</p>
+
+  <h3>Can I export the data?</h3>
+  <p>With Supabase, you can export data directly from the database. Contact support for help.</p>
+
+  <h3>How long is data stored?</h3>
+  <p>Analytics data is stored indefinitely. You can delete old records manually if needed.</p>
+
+  <h2>🆘 Troubleshooting</h2>
+
+  <div class="step">
+    <h3>Analytics dashboard is empty</h3>
+    <p><strong>Solution:</strong></p>
+    <ul>
+      <li>Wait a few minutes for data to collect (users need to visit your store)</li>
+      <li>Check that Supabase is properly configured</li>
+      <li>Verify the SQL queries were run in Supabase</li>
+      <li>Open browser Developer Tools (F12) and check Console for errors</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>I see data in analytics, but numbers seem low</h3>
+    <p><strong>Solution:</strong></p>
+    <ul>
+      <li>Analytics only track real user sessions (not bot traffic or pre-existing caches)</li>
+      <li>Make sure you've visited your store since setting up analytics</li>
+      <li>Refresh the dashboard to reload latest data</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>Supabase is giving an error</h3>
+    <p><strong>Solution:</strong></p>
+    <ul>
+      <li>Double-check your Project URL and Anon Key in supabase-config.js</li>
+      <li>Make sure the SQL queries are executed successfully in Supabase</li>
+      <li>Verify RLS (Row Level Security) policies exist on analytics tables</li>
+    </ul>
+  </div>
+
+  <h2>📞 Need Help?</h2>
+  <p>If you encounter issues:</p>
+  <ol>
+    <li>Open your browser's Developer Tools (F12 or right-click → Inspect)</li>
+    <li>Go to the Console tab</li>
+    <li>Look for any red error messages</li>
+    <li>Share the error message when seeking help</li>
+  </ol>
+
+  <div class="info">
+    <strong>💡 Pro Tip:</strong> Check your analytics every week to stay on top of your store's performance. Small improvements compound over time!
+  </div>
+
+  <hr style="margin:2rem 0;border:none;border-top:2px solid #eee">
+  <p style="text-align:center;color:#666;font-size:0.9rem">
+    Terry's Tender Wear Analytics • Advanced Dashboard<br>
+    Comprehensive insights for growing your business
+  </p>
+
+</div>
+
+</body>
+</html>

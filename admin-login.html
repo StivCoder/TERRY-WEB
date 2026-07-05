@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — Terry's Tender Wear</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body{background:var(--cream)}
+    .login-page{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+    .login-brand{background:linear-gradient(135deg,var(--coral-d) 0%,#c23030 100%);
+                 display:flex;flex-direction:column;align-items:center;justify-content:center;
+                 padding:3rem;text-align:center;position:relative;overflow:hidden}
+    .login-brand::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 30% 60%,rgba(255,255,255,.1),transparent 65%)}
+    .brand-graphic{font-size:6rem;margin-bottom:1.5rem;position:relative}
+    .brand-name{font-family:var(--font-d);font-size:2rem;font-weight:800;
+                color:#fff;position:relative;margin-bottom:.6rem}
+    .brand-name span{color:rgba(255,255,255,.6)}
+    .brand-sub{color:rgba(255,255,255,.55);font-size:.9rem;position:relative}
+    .brand-features{margin-top:2rem;display:flex;flex-direction:column;gap:.8rem;position:relative}
+    .brand-feat{display:flex;align-items:center;gap:.7rem;color:rgba(255,255,255,.75);font-size:.85rem}
+    .brand-feat-icon{font-size:1.1rem}
+
+    .login-form-wrap{display:flex;align-items:center;justify-content:center;
+                     background:var(--cream);padding:3rem}
+    .login-box{width:100%;max-width:420px}
+    .login-box h1{font-family:var(--font-d);font-size:2.2rem;font-weight:800;
+                  color:var(--charcoal);margin-bottom:.35rem}
+    .login-box .login-sub{color:var(--mid);font-size:.9rem;margin-bottom:2rem;line-height:1.6}
+
+    .db-status-wrap{margin-bottom:1.8rem}
+    .db-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;
+             border-radius:50px;font-size:.78rem;font-weight:700;border:1.5px solid}
+    .db-pill.connected{background:#d4f4de;color:#155724;border-color:rgba(21,87,36,.2)}
+    .db-pill.local{background:#fff3cd;color:#856404;border-color:rgba(133,100,4,.2)}
+    .db-pill.checking{background:var(--cream-d);color:var(--mid);border-color:var(--line)}
+    .db-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .db-pill.connected .db-dot{background:#155724;animation:pulse-g 1.8s ease infinite}
+    .db-pill.local .db-dot{background:#856404}
+    .db-pill.checking .db-dot{background:var(--light)}
+
+    .field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.1rem}
+    .field label{font-size:.72rem;font-weight:700;letter-spacing:.09em;
+                 text-transform:uppercase;color:var(--mid)}
+    .field input{padding:.82rem 1.1rem;border:2px solid var(--line-dark);
+                 border-radius:var(--r-md);font-size:.92rem;background:#fff;
+                 color:var(--charcoal);outline:none;transition:border-color var(--t);width:100%}
+    .field input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,.1)}
+    .field input.err{border-color:var(--coral-d)}
+    .field-error{font-size:.76rem;color:var(--coral-d);font-weight:600;
+                 margin-top:.25rem;display:none}
+    .field-error.show{display:block}
+
+    .btn-login-submit{width:100%;padding:.9rem;margin-top:.4rem;
+                      background:linear-gradient(90deg,var(--coral-d),var(--coral));
+                      color:#fff;border:none;border-radius:var(--r-md);
+                      font-size:.95rem;font-weight:800;cursor:pointer;
+                      transition:var(--t);letter-spacing:.02em;
+                      box-shadow:0 4px 20px rgba(255,107,107,.3)}
+    .btn-login-submit:hover{background:linear-gradient(90deg,#c23030,var(--coral-d));
+                             transform:translateY(-1px);box-shadow:0 8px 28px rgba(255,107,107,.4)}
+    .btn-login-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+    .login-notice{margin-top:1.5rem;padding:1rem 1.1rem;border-radius:var(--r-md);
+                  font-size:.78rem;line-height:1.8;border:1.5px solid}
+    .login-notice.local-notice{background:#fff3cd;color:#856404;border-color:rgba(133,100,4,.2)}
+    .login-notice.sb-notice{background:var(--mint-l);color:var(--mint-d);border-color:rgba(78,205,196,.3)}
+    .login-notice strong{font-weight:800}
+    .login-notice a{color:inherit;text-decoration:underline;font-weight:700}
+    .back-link{display:block;text-align:center;margin-top:1.5rem;
+               font-size:.8rem;color:var(--mid)}
+    .back-link a{color:var(--coral);font-weight:600}
+
+    @media(max-width:768px){
+      .login-page{grid-template-columns:1fr}
+      .login-brand{display:none}
+      .login-form-wrap{padding:2rem 1.3rem;align-items:flex-start;padding-top:3rem}
+      .login-box h1{font-size:1.8rem}
+      .field input{padding:.75rem 1rem;font-size:.9rem}
+      .btn-login-submit{padding:.8rem;font-size:.9rem}
+    }
+    @media(max-width:480px){
+      .login-form-wrap{padding:1.2rem 1rem;padding-top:2rem}
+      .login-box{max-width:100%}
+      .login-box h1{font-size:1.5rem;margin-bottom:.25rem}
+      .login-box .login-sub{font-size:.8rem;margin-bottom:1.5rem}
+      .db-pill{font-size:.72rem;padding:.3rem .8rem}
+      .field{margin-bottom:.9rem;gap:.3rem}
+      .field label{font-size:.68rem}
+      .field input{padding:.65rem .9rem;font-size:.85rem}
+      .btn-login-submit{padding:.7rem;font-size:.85rem;margin-top:.3rem}
+      .login-notice{margin-top:1.2rem;padding:.8rem;font-size:.72rem}
+      .back-link{margin-top:1.2rem;font-size:.75rem}
+      .brand-graphic{display:none}
+    }
+    @keyframes pulse-g{0%,100%{opacity:1}50%{opacity:.4}}
+  </style>
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- Brand panel -->
+  <div class="login-brand">
+    <div class="brand-graphic">👶</div>
+    <div class="brand-name">Terry <span>Tender</span> Wear</div>
+    <div class="brand-sub">Admin Dashboard</div>
+    <div class="brand-features">
+      <div class="brand-feat"><span class="brand-feat-icon">📦</span> Add &amp; manage products</div>
+      <div class="brand-feat"><span class="brand-feat-icon">🖼️</span> Upload product images</div>
+      <div class="brand-feat"><span class="brand-feat-icon">⚡</span> Changes go live instantly</div>
+      <div class="brand-feat"><span class="brand-feat-icon">📊</span> View orders &amp; stats</div>
+    </div>
+  </div>
+
+  <!-- Login form -->
+  <div class="login-form-wrap">
+    <div class="login-box">
+
+      <h1>Welcome back</h1>
+      <p class="login-sub">Enter your email and password</p>
+
+      <!-- Database Status Indicator -->
+      <div class="db-status-wrap">
+        <div class="db-pill checking" id="db-pill">
+          <div class="db-dot"></div>
+          <span id="db-pill-text">Checking…</span>
+        </div>
+      </div>
+
+      <!-- Email (shown in Supabase mode) -->
+      <div class="field" id="email-field" style="display:none">
+        <label for="f-email">Email Address</label>
+        <input type="email" id="f-email" placeholder="admin@example.com" autocomplete="email"/>
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="f-password">Password</label>
+        <input type="password" id="f-password" placeholder="Enter your password" autocomplete="current-password"/>
+        <div class="field-error" id="login-err"></div>
+      </div>
+
+      <button class="btn-login-submit" id="login-btn">Sign In to Dashboard</button>
+
+      <!-- Notice for Local Storage Mode -->
+      <div class="login-notice local-notice" id="local-notice" style="display:none">
+        <strong>Local Storage Mode:</strong> You're using local browser storage. Password is <strong>admin</strong>. For production, connect Supabase (see setup guide).
+      </div>
+
+      <p class="back-link">← <a href="index.html">Back to Store</a></p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Load scripts in correct order -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase-config.js"></script>
+<script src="db.js"></script>
+<script>
+(function(){
+  var loginBtn   = document.getElementById('login-btn');
+  var passEl     = document.getElementById('f-password');
+  var emailEl    = document.getElementById('f-email');
+  var emailField = document.getElementById('email-field');
+  var errEl      = document.getElementById('login-err');
+  var dbPill     = document.getElementById('db-pill');
+  var dbPillTxt  = document.getElementById('db-pill-text');
+  var localNote  = document.getElementById('local-notice');
+
+  function showErr(msg){
+    errEl.textContent = msg;
+    errEl.classList.add('show');
+    passEl.classList.add('err');
+  }
+  function clearErr(){
+    errEl.classList.remove('show');
+    passEl.classList.remove('err');
+    errEl.textContent = '';
+  }
+
+  async function init(){
+    /* If already logged in → go straight to dashboard */
+    try {
+      var loggedIn = await DB.isAdminLoggedIn();
+      if(loggedIn){ window.location.href = 'admin.html'; return; }
+    } catch(e){ /* not logged in, continue */ }
+
+    var cfg = window.TERRY_CONFIG;
+
+    if(cfg && cfg.configured){
+      dbPill.className    = 'db-pill connected';
+      dbPillTxt.textContent = 'Supabase Connected';
+      emailField.style.display = 'flex';
+    } else {
+      dbPill.className    = 'db-pill local';
+      dbPillTxt.textContent = 'Local Storage Mode';
+      localNote.style.display = 'block';
+    }
+  }
+
+  async function doLogin(){
+    clearErr();
+    var pass  = passEl.value.trim();
+    var email = emailEl ? emailEl.value.trim() : '';
+    var cfg   = window.TERRY_CONFIG;
+
+    if(!pass){ showErr('Please enter your password.'); passEl.focus(); return; }
+    if(cfg && cfg.configured && !email){
+      showErr('Please enter your email address.');
+      emailEl.focus();
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff"></span> Signing in…';
+
+    try {
+      await DB.adminLogin(email, pass);
+      window.location.href = 'admin.html';
+    } catch(e){
+      showErr(e.message || 'Login failed. Check your credentials.');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Sign In to Dashboard';
+    }
+  }
+
+  loginBtn.addEventListener('click', doLogin);
+  passEl.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+  if(emailEl) emailEl.addEventListener('keydown', function(e){ if(e.key==='Enter') passEl.focus(); });
+  passEl.addEventListener('input', clearErr);
+
+  init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Setup Guide — Terry's Tender Wear</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 2rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    h1 { color: #FF6B6B; margin-bottom: 0.5rem; font-size: 2.2rem; }
+    .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 2rem; }
+    h2 { color: #444; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 3px solid #FF6B6B; padding-bottom: 0.5rem; }
+    h3 { color: #555; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+    p, li { margin-bottom: 0.8rem; }
+    ul { margin-left: 2rem; }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      color: #d63384;
+    }
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .step { background: #f9f9f9; border-left: 4px solid #FF6B6B; padding: 1.5rem; margin: 1.5rem 0; border-radius: 4px; }
+    .success { background: #d4f4de; color: #155724; padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid #10B981; }
+    .warning { background: #fff3cd; color: #856404; padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid #F59E0B; }
+    .info { background: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid #17a2b8; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f4f4f4;
+      font-weight: 700;
+    }
+    tr:hover { background: #f9f9f9; }
+    .badge { display: inline-block; background: #FF6B6B; color: white; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; }
+    .check { color: #10B981; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📊 Analytics Dashboard Setup Guide</h1>
+  <p class="subtitle">Complete guide to setting up the advanced analytics system for Terry's Tender Wear</p>
+
+  <!-- Overview -->
+  <h2>📖 Overview</h2>
+  <p>The Analytics Dashboard provides comprehensive insights into your store's performance:</p>
+  <ul>
+    <li><strong>User Tracking:</strong> Sessions, unique visitors, device types, engagement metrics</li>
+    <li><strong>Page Analytics:</strong> Most visited pages, time on page, page view distribution</li>
+    <li><strong>Product Analytics:</strong> Product views, clicks, add-to-cart interactions, conversion rates</li>
+    <li><strong>Sales Analytics:</strong> Revenue trends, order count, average order value</li>
+  </ul>
+
+  <!-- Files Added -->
+  <h2>📁 New Files Created</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>File</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>analytics.js</code></td>
+        <td>Core tracking library - initializes automatically on all pages</td>
+      </tr>
+      <tr>
+        <td><code>ANALYTICS_SETUP.html</code></td>
+        <td>This setup guide</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Database Setup -->
+  <h2>🗄️ Database Setup (Supabase Required)</h2>
+  <p>To enable full analytics functionality with Supabase, run the SQL queries below in your Supabase dashboard:</p>
+
+  <div class="step">
+    <h3>Step 1: Navigate to Supabase SQL Editor</h3>
+    <ol>
+      <li>Open <a href="https://supabase.com" target="_blank">supabase.com</a></li>
+      <li>Login to your project</li>
+      <li>Click <strong>SQL Editor</strong> in the left sidebar</li>
+      <li>Click <strong>New Query</strong></li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h3>Step 2: Copy the Analytics Tables SQL</h3>
+    <p>Copy and paste the SQL below into your Supabase SQL editor, then click "Run":</p>
+    
+    <div class="code-block">-- ── ANALYTICS TABLES ─────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS analytics_sessions (
+  id              BIGSERIAL    PRIMARY KEY,
+  session_id      TEXT         NOT NULL UNIQUE,
+  first_visit     TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  last_visit      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  page_count      INTEGER      NOT NULL DEFAULT 1,
+  total_time_sec  INTEGER      NOT NULL DEFAULT 0,
+  referrer        TEXT         NOT NULL DEFAULT '',
+  country         TEXT         NOT NULL DEFAULT 'Unknown',
+  device_type     TEXT         NOT NULL DEFAULT 'Unknown'
+);
+
+CREATE TABLE IF NOT EXISTS analytics_page_views (
+  id              BIGSERIAL    PRIMARY KEY,
+  session_id      TEXT         NOT NULL,
+  page_url        TEXT         NOT NULL,
+  page_title      TEXT         NOT NULL DEFAULT '',
+  time_on_page_sec INTEGER      NOT NULL DEFAULT 0,
+  viewed_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (session_id) REFERENCES analytics_sessions(session_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS analytics_product_views (
+  id              BIGSERIAL    PRIMARY KEY,
+  session_id      TEXT         NOT NULL,
+  product_id      BIGINT       NOT NULL,
+  product_name    TEXT         NOT NULL DEFAULT '',
+  interaction     TEXT         NOT NULL DEFAULT 'view',
+  viewed_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (session_id) REFERENCES analytics_sessions(session_id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS analytics_sales (
+  id              BIGSERIAL    PRIMARY KEY,
+  order_id        BIGINT       NOT NULL,
+  session_id      TEXT         NOT NULL DEFAULT '',
+  total_amount    INTEGER      NOT NULL DEFAULT 0,
+  item_count      INTEGER      NOT NULL DEFAULT 0,
+  created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY (session_id) REFERENCES analytics_sessions(session_id) ON DELETE SET NULL
+);
+
+-- Enable Row Level Security
+ALTER TABLE analytics_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analytics_page_views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analytics_product_views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analytics_sales ENABLE ROW LEVEL SECURITY;
+
+-- Public can INSERT analytics (for tracking)
+CREATE POLICY "Public insert analytics_sessions"
+  ON analytics_sessions FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Public insert analytics_page_views"
+  ON analytics_page_views FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Public insert analytics_product_views"
+  ON analytics_product_views FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Public insert analytics_sales"
+  ON analytics_sales FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- Admin (authenticated users) can READ analytics
+CREATE POLICY "Admin read analytics_sessions"
+  ON analytics_sessions FOR SELECT
+  TO authenticated
+  USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admin read analytics_page_views"
+  ON analytics_page_views FOR SELECT
+  TO authenticated
+  USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admin read analytics_product_views"
+  ON analytics_product_views FOR SELECT
+  TO authenticated
+  USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admin read analytics_sales"
+  ON analytics_sales FOR SELECT
+  TO authenticated
+  USING (auth.uid() IS NOT NULL);

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supabase Setup Guide — Terry's Tender Wear</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: var(--cream); }
+    .guide-wrap { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+    .guide-hero { text-align: center; margin-bottom: 3.5rem; }
+    .guide-hero .eyebrow { justify-content: center; }
+    .step-card { background: var(--white); border-radius: var(--r-md); padding: 2rem 2rem 2rem 1.5rem;
+                 margin-bottom: 1.5rem; box-shadow: var(--sh-sm); display: grid;
+                 grid-template-columns: 56px 1fr; gap: 1.2rem; align-items: start; }
+    .step-num { width: 44px; height: 44px; border-radius: 50%; background: var(--charcoal);
+                color: var(--cream); font-weight: 700; font-size: 1rem; display: flex;
+                align-items: center; justify-content: center; font-family: var(--font-d);
+                flex-shrink: 0; margin-top: .1rem; }
+    .step-card h3 { font-family: var(--font-d); font-size: 1.15rem; margin-bottom: .5rem; color: var(--charcoal); }
+    .step-card p  { color: var(--mid); font-size: .88rem; line-height: 1.8; margin-bottom: .6rem; }
+    .step-card p:last-child { margin-bottom: 0; }
+    .step-card a  { color: var(--mint-d); text-decoration: underline; }
+    code, .code-block { background: var(--cream-d); border-radius: var(--r-sm);
+                        font-family: 'Courier New', monospace; font-size: .82rem; color: var(--ink); }
+    code { padding: .15rem .45rem; white-space: nowrap; }
+    .code-block { display: block; padding: 1.1rem 1.3rem; margin: .8rem 0;
+                  white-space: pre; overflow-x: auto; line-height: 1.7;
+                  border-left: 3px solid var(--mint); }
+    .alert { padding: 1rem 1.3rem; border-radius: var(--r-sm); font-size: .85rem;
+             line-height: 1.7; margin: .8rem 0; }
+    .alert-info    { background: #e8f4fd; border-left: 3px solid #3498db; color: #1a5276; }
+    .alert-success { background: #d4f4de; border-left: 3px solid #27ae60; color: #1a7340; }
+    .alert-warn    { background: #fef9e7; border-left: 3px solid #f39c12; color: #7d6608; }
+    .divider { border: none; border-top: 1px solid var(--line); margin: 2.5rem 0; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--mid);
+                 font-size: .85rem; margin-bottom: 2rem; transition: color var(--t); }
+    .back-link:hover { color: var(--charcoal); }
+    .file-tag { display: inline-flex; align-items: center; gap: .35rem; background: var(--charcoal);
+                color: var(--cream); font-size: .72rem; font-weight: 600; padding: .25rem .65rem;
+                border-radius: 50px; letter-spacing: .05em; }
+  </style>
+</head>
+<body>
+<div class="guide-wrap">
+
+  <a href="admin-login.html" class="back-link">← Back to Admin Login</a>
+
+  <div class="guide-hero">
+    <span class="eyebrow">📘 Setup Guide</span>
+    <h1 class="title" style="margin-bottom:.6rem">Connect Supabase to Your Store</h1>
+    <p style="color:var(--mid);max-width:520px;margin:0 auto;line-height:1.8">
+      This guide will walk you through creating a free Supabase database and linking it
+      to Terry's Tender Wear so your products and orders sync across all devices.
+    </p>
+  </div>
+
+  <div class="alert alert-success">
+    ✅ <strong>Good news:</strong> The store works perfectly right now using <strong>Local Storage</strong> —
+    no setup needed. Follow this guide only when you're ready for a real database.
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-card">
+    <div class="step-num">1</div>
+    <div>
+      <h3>Create a free Supabase account</h3>
+      <p>Go to <a href="https://supabase.com" target="_blank">supabase.com</a> and click <strong>"Start for free"</strong>.
+         Sign up with GitHub, Google, or your email address.</p>
+      <p>Once signed in, click <strong>"New project"</strong>. Give it the name
+         <code>terry-tender-wear</code>, set a strong database password (save it!),
+         and choose a region close to Kenya — <strong>Europe West</strong> works well.</p>
+      <p>Click <strong>"Create new project"</strong> and wait about 2 minutes for Supabase to finish setup.</p>
+      <div class="alert alert-info">⏱ The free plan is completely free forever with up to 500 MB storage — more than enough for a product catalogue.</div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-card">
+    <div class="step-num">2</div>
+    <div>
+      <h3>Get your API keys</h3>
+      <p>In your Supabase project dashboard:</p>
+      <p>1. Click the <strong>⚙️ Settings</strong> icon in the left sidebar.<br>
+         2. Click <strong>"API"</strong> under Configuration.<br>
+         3. Copy your <strong>Project URL</strong> (looks like <code>https://abcxyz.supabase.co</code>).<br>
+         4. Copy the <strong>anon / public</strong> key (long string starting with <code>eyJ…</code>).</p>
+      <div class="alert alert-warn">
+        ⚠️ <strong>Never share your "service_role" key</strong> — it has full database access.
+        Only use the <strong>anon/public</strong> key in your website files.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-card">
+    <div class="step-num">3</div>
+    <div>
+      <h3>Paste your keys into supabase-config.js</h3>
+      <p>Open the file <span class="file-tag">📄 supabase-config.js</span> in any text editor and replace the two placeholder values:</p>
+      <code class="code-block">// BEFORE (placeholders):
+const SUPABASE_URL      = "https://YOUR_PROJECT_ID.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_PUBLIC_KEY_HERE";
+
+// AFTER (your real values):
+const SUPABASE_URL      = "https://abcxyzabc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";</code>
+      <p>Save the file. The store will automatically switch from Local Storage to Supabase.</p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-card">
+    <div class="step-num">4</div>
+    <div>
+      <h3>Create the database tables</h3>
+      <p>In Supabase, click <strong>"SQL Editor"</strong> in the left sidebar, then click <strong>"New query"</strong>.
+         Paste the SQL below and click <strong>"Run"</strong>:</p>
+      <code class="code-block">-- Products table
+CREATE TABLE products (
+  id          BIGSERIAL PRIMARY KEY,
+  name        TEXT NOT NULL,
+  price       INTEGER NOT NULL,
+  category    TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  image_url   TEXT DEFAULT '',
+  stock       INTEGER DEFAULT 0,
+  is_new      BOOLEAN DEFAULT false,
+  is_featured BOOLEAN DEFAULT false,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Orders table (WhatsApp orders are logged here)
+CREATE TABLE orders (
+  id             BIGSERIAL PRIMARY KEY,
+  customer_name  TEXT,
+  customer_phone TEXT,
+  items          JSONB,
+  total          INTEGER,
+  status         TEXT DEFAULT 'pending',
+  created_at     TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders   ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read products (public storefront)
+CREATE POLICY "Public read products"
+  ON products FOR SELECT USING (true);
+
+-- Anyone can insert orders (customers placing orders)
+CREATE POLICY "Public insert orders"
+  ON orders FOR INSERT WITH CHECK (true);
+
+-- Authenticated users (admin) have full access
+CREATE POLICY "Admin full products"
+  ON products FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full orders"
+  ON orders FOR ALL USING (auth.role() = 'authenticated');</code>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-card">
+    <div class="step-num">5</div>
+    <div>
+      <h3>Seed your product catalogue (optional)</h3>
+      <p>Run this SQL in the Supabase SQL Editor to add the 6 sample products:</p>
+      <code class="code-block">INSERT INTO products
+  (name, price, category, description, image_url, stock, is_new, is_featured)
+VALUES
+  ('Rosebud Onesie', 1200, 'Onesies',
+   'Ultra-soft cotton onesie with a delicate rose print.',
+   'https://images.unsplash.com/photo-1522771930-78848d9293e8?w=500&h=500&auto=format&fit=crop&q=80',
+   25, true, true),
+
+  ('Sage Snuggle Set', 2400, 'Sets',
+   'Two-piece matching set in calming sage green. Machine washable.',
+   'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500&h=500&auto=format&fit=crop&q=80',
+   15, true, false),
+
+  ('Cloud Knit Romper', 1800, 'Rompers',
+   'Lightweight knit romper with easy snap closure.',
+   'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=500&auto=format&fit=crop&q=80',
+   20, true, true),
+
+  ('Petal Soft Sleepsuit', 1500, 'Sleepwear',
+   'Footed sleepsuit in brushed cotton. Keeps babies warm all night.',
+   'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500&h=500&auto=format&fit=crop&q=80',
+   30, false, false),
+
+  ('Linen Bloom Dress', 2100, 'Dresses',
+   'Airy linen blend dress with flutter sleeves.',
+   'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&h=500&auto=format&fit=crop&q=80',
+   12, false, true),
+
+  ('Warm Hug Cardigan', 1950, 'Knitwear',
+   'Hand-knit style cardigan in warm ivory. Buttons at front.',
+   'https://images.unsplash.com/photo-1543087903-1ac2ec7aa8c5?w=500&h=500&auto=format&fit=crop&q=80',
+   18, true, false);</code>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-card">
+    <div class="step-num">6</div>
+    <div>
+      <h3>Create your admin account</h3>
+      <p>In Supabase, go to <strong>Authentication → Users</strong> and click <strong>"Add user"</strong>.
+         Enter your email address and a strong password.</p>
+      <p>This is the email and password you'll use on the <a href="admin-login.html">Admin Login page</a>.
+         When Supabase is connected, the login uses real Supabase Auth — much more secure than the
+         Local Storage fallback.</p>
+      <div class="alert alert-info">
+        💡 You can also enable Google / GitHub social login for the admin under
+        <strong>Authentication → Providers</strong> in Supabase — completely optional.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step-card">
+    <div class="step-num">7</div>
+    <div>
+      <h3>Deploy your website (optional)</h3>
+      <p>Your website is a collection of plain HTML/CSS/JS files — no server required. You can host it free on any of these platforms:</p>
+      <p>
+        • <a href="https://pages.github.com" target="_blank"><strong>GitHub Pages</strong></a> — Free, push your files to a GitHub repo and enable Pages.<br>
+        • <a href="https://netlify.com" target="_blank"><strong>Netlify</strong></a> — Drag and drop your folder. Live in 30 seconds. Free plan available.<br>
+        • <a href="https://vercel.com" target="_blank"><strong>Vercel</strong></a> — Same as Netlify. Free plan available.
+      </p>
+      <div class="alert alert-warn">
+        ⚠️ When deploying publicly, make sure your Supabase Row Level Security (RLS) policies are
+        set correctly (Step 4 above already does this). Your <code>anon</code> key is safe to include
+        in public files — RLS controls what it can access.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Troubleshooting -->
+  <h2 class="title" style="font-size:1.5rem;margin-bottom:1.5rem">Troubleshooting</h2>
+
+  <div class="step-card">
+    <div class="step-num" style="background:var(--coral-d)">?</div>
+    <div>
+      <h3>Products aren't loading from Supabase</h3>
+      <p>• Double-check your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in <code>supabase-config.js</code> — even one wrong character breaks it.<br>
+         • Make sure you ran the SQL in Step 4 to create the <code>products</code> table.<br>
+         • Check the browser Console (F12 → Console) for error messages.<br>
+         • Confirm Row Level Security is enabled and the <em>Public read</em> policy exists.</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num" style="background:var(--coral-d)">?</div>
+    <div>
+      <h3>Admin login says "Invalid credentials"</h3>
+      <p>• When Supabase is configured, you must use the email+password from your Supabase Auth user (Step 6).<br>
+         • The fallback password <code>terry2024</code> only works in Local Storage mode (no Supabase configured).<br>
+         • Reset your password in Supabase → Authentication → Users.</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num" style="background:var(--coral-d)">?</div>
+    <div>
+      <h3>How do I change the WhatsApp number?</h3>
+      <p>Open <span class="file-tag">📄 supabase-config.js</span> and change the line:<br>
+      <code>const WHATSAPP_NUMBER = "254118053640";</code><br>
+      Replace <code>254118053640</code> with your number in international format — no <code>+</code> sign, no spaces.
+      For example: <code>254700123456</code></p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div style="text-align:center">
+    <a href="admin-login.html" class="btn btn-dark" style="padding:.9rem 2.2rem">
+      Go to Admin Login →
+    </a>
+    <p style="margin-top:1rem;font-size:.8rem;color:var(--mid)">
+      <a href="index.html">← Back to Store</a>
+    </p>
+  </div>
+
+</div>
+
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="db.js"></script>
+<script src="cart.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
